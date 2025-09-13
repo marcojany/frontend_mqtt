@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Access</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Switch lingua -->
+  <div class="lang-switch">
+    <img src="https://flagcdn.com/w20/it.png" alt="Italiano" onclick="setLanguage('it')">
+    <img src="https://flagcdn.com/w20/gb.png" alt="English" onclick="setLanguage('en')">
+  </div>
+
+  <div class="container glass">
+     <!-- Status Backend -->
+    <div class="flex items-center space-x-2 mb-4">
+      <div id="backend-led" class="w-3 h-3 rounded-full bg-gray-400"></div>
+      <span id="backend-status" class="text-sm text-gray-600">Waiting for connection...</span>
+    </div>
+    <h1 id="title">Inserisci il tuo codice</h1>
+    <div id="display">_____</div>
+
+    <!-- 🔢 Tastierino -->
+    <div class="keypad">
+      <button class="key">1</button>
+      <button class="key">2</button>
+      <button class="key">3</button>
+      <button class="key">4</button>
+      <button class="key">5</button>
+      <button class="key">6</button>
+      <button class="key">7</button>
+      <button class="key">8</button>
+      <button class="key">9</button>
+      <button class="key">←</button>
+      <button class="key">0</button>
+      <button class="key">OK</button>
+    </div>
+
+    <button id="relayBtn" class="hidden">🔓 Attiva Relè</button>
+    <p id="status"></p>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

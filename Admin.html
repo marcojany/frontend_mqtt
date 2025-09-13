@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <style>
+    body {
+      background-color: #f5f5f5;
+      color: #000;
+      font-family: sans-serif;
+      padding: 24px;
+    }
+
+    h1, h2 {
+      margin-bottom: 12px;
+    }
+
+    form input, form button {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    form button {
+      background-color: #1e40af;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+
+    form button:hover {
+      background-color: #1e3a8a;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #e5e7eb;
+    }
+
+    /* Colori per azioni log */
+    .ACTIVATED {
+      background-color: #25D03E; /* verde */
+    }
+
+    .CREATED {
+      background-color: #e5e7eb; /* nessuno */
+    }
+
+    .DELETED {
+      background-color: #EA250B; /* rosso */
+    }
+	
+	.VERIFIED {
+      background-color: #e5e7eb; /* nessuno */
+    }
+
+    .EXPIRED {
+      background-color: #EA250B; /* rosso */
+    }
+
+    .INVALID {
+      background-color: #FFAE22; /* arancio */
+    }
+
+    /* Colore del testo */
+    td, th {
+      color: #000;
+    }
+
+    /* Input calendario */
+    .calendar-input {
+      background-color: #fff;
+      border-radius: 6px;
+    }
+
+    button.delete-btn {
+      background-color: #ef4444;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+      padding: 4px 8px;
+    }
+
+    button.delete-btn:hover {
+      background-color: #dc2626;
+    }
+
+  </style>
+</head>
+<body>
+    <!-- Stato backend -->
+  <div class="flex items-center space-x-2 mb-6">
+    <div id="backend-led" class="w-3 h-3 rounded-full bg-gray-400"></div>
+    <span id="backend-status" class="text-sm text-gray-600">Waiting for connection</span>
+  </div>
+  
+  <h1>Admin Panel</h1>
+
+  <!-- Sezione creazione codice -->
+<section class="mb-8">
+  <h2 class="text-xl font-semibold mb-2">Crea Nuovo Codice</h2>
+  <form id="createCodeForm" class="space-y-2">
+    <input type="text" id="username" placeholder="Nome utente" required class="border p-2 rounded">
+
+    <!-- Data inizio validità -->
+    <label for="startDate" class="block text-sm font-medium">Inizio validità</label>
+    <input type="datetime-local" id="startDate" class="calendar-input" required>
+
+    <!-- Data fine validità -->
+    <label for="expiryDate" class="block text-sm font-medium">Fine validità</label>
+    <input type="datetime-local" id="expiryDate" class="calendar-input" required>
+
+    <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">Crea Codice</button>
+  </form>
+</section>
+
+
+  <!-- Tabella codici attivi -->
+<section class="mb-8">
+  <h2 class="text-xl font-semibold mb-2">📋 Codici Attivi</h2>
+  <table id="codesTable">
+    <thead>
+      <tr>
+        <th>Codice</th>
+        <th>Utente</th>
+        <th>Inizio validità</th>
+        <th>Scadenza</th>
+        <th>Tempo rimanente</th>
+        <th>Azioni</th>
+      </tr>
+    </thead>
+    <tbody id="codesTableBody"></tbody>
+  </table>
+</section>
+
+
+  <!-- Tabella log accessi -->
+  <section>
+    <h2>📜 Log Accessi</h2>
+    <table id="logsTable">
+      <thead>
+        <tr>
+          <th>Utente</th>
+          <th>Codice</th>
+          <th>Azione</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody id="logsTableBody"></tbody>
+    </table>
+  </section>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>
