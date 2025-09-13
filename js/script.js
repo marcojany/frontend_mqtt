@@ -3,7 +3,7 @@ let relayTimeout = null;
 const display = document.getElementById("display");
 const relayBtn = document.getElementById("relayBtn");
 const status = document.getElementById("status");
-const API_BASE = "https://backend-mqtt-87yr.onrender.com"; // indirizzo Backend service
+const API_BASE = "https://backend-mqtt-1.onrender.com"; // indirizzo Backend service
 const led = document.getElementById("backend-led");
 const backendStatus = document.getElementById("backend-status");
 

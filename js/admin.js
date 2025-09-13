@@ -1,4 +1,4 @@
-const API_BASE = "https://backend-mqtt-87yr.onrender.com";
+const API_BASE = "https://backend-mqtt-1.onrender.com";
 const led = document.getElementById("backend-led");
 const backendStatus = document.getElementById("backend-status");
 
