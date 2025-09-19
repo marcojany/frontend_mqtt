@@ -36,7 +36,7 @@ setInterval(pingBackend, 60000);
 // 🔤 Traduzioni
 const translations = {
   it: {
-    title: "Inserisci il tuo codice",
+    title: "Inserisci codice",
     insert5: "Inserisci 5 cifre",
     correct: "✅ Codice corretto, puoi attivare il relè",
     expired: "⏱️ Tempo scaduto, reinserire il codice",
@@ -138,11 +138,21 @@ document.querySelectorAll(".key").forEach(btn => {
 
 // 🚀 Attiva relè
 relayBtn.addEventListener("click", async () => {
+ const mqttCommand = {  //todo: comando MQTT da inviare
+    id: 1,
+    src: "webclient",
+    method: "Switch.Set",
+    params: {
+      id: 0,
+      on: true
+    }
+  }; 
+  
   try {
     const res = await fetch(`${API_BASE}/send-command`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userCode: inputCode, command: "ON" })
+      body: JSON.stringify({ userCode: inputCode, command: mqttCommand })
     });
     const data = await res.json();
 
