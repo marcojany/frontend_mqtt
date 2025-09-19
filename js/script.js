@@ -138,7 +138,8 @@ document.querySelectorAll(".key").forEach(btn => {
 
 // 🚀 Attiva relè
 relayBtn.addEventListener("click", async () => {
- const mqttCommand = {  //todo: comando MQTT da inviare
+ //todo: comando MQTT da inviare
+  const mqttCommand = {  
     id: 1,
     src: "webclient",
     method: "Switch.Set",
