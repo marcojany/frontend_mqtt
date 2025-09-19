@@ -144,7 +144,13 @@ relayBtn.addEventListener("click", async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userCode: inputCode })
     });
+
     const data = await res.json();
+
+    if (!res.ok) {
+      resetUI(data.error || translations[currentLang].error);
+      return;
+    }
 
     if (data.success) {
       status.textContent = translations[currentLang].relay;
