@@ -142,7 +142,7 @@ relayBtn.addEventListener("click", async () => {
     const res = await fetch(`${API_BASE}/send-command`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userCode: inputCode, command: "ON" })
+      body: JSON.stringify({ userCode: inputCode })
     });
     const data = await res.json();
 
