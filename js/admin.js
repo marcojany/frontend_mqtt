@@ -1,24 +1,19 @@
 const API_BASE = "https://backend-mqtt-1.onrender.com";
-const led = document.getElementById("backend-led");
 const backendStatus = document.getElementById("backend-status");
 
 //ping per svegliare Backend
 async function pingBackend() {
-  led.className = "w-3 h-3 rounded-full bg-gray-400"; // grigio
-  backendStatus.textContent = "Waiting for connection...";
+  backendStatus.textContent = "Waiting for connection...  ⏳";
 
   try {
     const res = await fetch(`${API_BASE}/ping`, { cache: "no-store" });
     if (res.ok) {
-      led.className = "w-3 h-3 rounded-full bg-green-500"; // verde
-      backendStatus.textContent = "Online";
+      backendStatus.textContent = "Online 🟢";
     } else {
-      led.className = "w-3 h-3 rounded-full bg-red-500"; // rosso
-      backendStatus.textContent = "Error";
+      backendStatus.textContent = "Error ❌";
     }
   } catch (err) {
-    led.className = "w-3 h-3 rounded-full bg-red-500"; // rosso
-    backendStatus.textContent = "Offline";
+    backendStatus.textContent = "Offline 🔴";
   }
 }
 

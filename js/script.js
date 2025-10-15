@@ -1,35 +1,30 @@
 let inputCode = "";
 let relayTimeout = null;
 const display = document.getElementById("display");
-const relayBtn = document.getElementById("relayBtn");
+const relay1Btn = document.getElementById("relay1Btn");
+const relay2Btn = document.getElementById("relay2Btn");
 const status = document.getElementById("status");
 const API_BASE = "https://backend-mqtt-1.onrender.com"; // indirizzo Backend service
-const led = document.getElementById("backend-led");
 const backendStatus = document.getElementById("backend-status");
 
 //ping per svegliare Backend
 async function pingBackend() {
-  led.className = "w-3 h-3 rounded-full bg-gray-400"; // grigio
-  backendStatus.textContent = "Waiting for connection...";
+  backendStatus.textContent = "Waiting for connection... ⏳";
 
   try {
     const res = await fetch(`${API_BASE}/ping`, { cache: "no-store" });
     if (res.ok) {
-      led.className = "w-3 h-3 rounded-full bg-green-500"; // verde
-      backendStatus.textContent = "Online";
+      backendStatus.textContent = "Online 🟢";
     } else {
-      led.className = "w-3 h-3 rounded-full bg-red-500"; // rosso
-      backendStatus.textContent = "Error";
+      backendStatus.textContent = "Error ❌";
     }
   } catch (err) {
-    led.className = "w-3 h-3 rounded-full bg-red-500"; // rosso
-    backendStatus.textContent = "Offline";
+    backendStatus.textContent = "Offline 🔴";
   }
 }
 
 // ping immediato
 pingBackend();
-
 // ping ogni 60 secondi
 setInterval(pingBackend, 60000);
 
@@ -38,24 +33,28 @@ const translations = {
   it: {
     title: "Inserisci codice",
     insert5: "Inserisci 5 cifre",
-    correct: "✅ Codice corretto, puoi attivare il relè",
+    correct: "✅ Codice corretto, puoi attivare i relè",
     expired: "⏱️ Tempo scaduto, reinserire il codice",
     wrong: "❌ Codice errato",
-    relay: "✅ Relè attivato!",
+    relay1: "✅ Relè 1 attivato!",
+    relay2: "✅ Relè 2 attivato!",
     invalid: "❌ Codice non valido",
     error: "⚠️ Errore connessione",
-    relayBtn: "🔓 Attiva Relè"
+    relay1Btn: "🔓 Apri il Cancello",
+    relay2Btn: "🔓 Apri il Portone"
   },
   en: {
     title: "Enter your code",
     insert5: "Enter 5 digits",
-    correct: "✅ Correct code, you can activate the relay",
+    correct: "✅ Correct code, you can activate the relays",
     expired: "⏱️ Timeout expired, re-enter the code",
     wrong: "❌ Wrong code",
-    relay: "✅ Relay activated!",
+    relay1: "✅ Relay 1 activated!",
+    relay2: "✅ Relay 2 activated!",
     invalid: "❌ Invalid code",
     error: "⚠️ Connection error",
-    relayBtn: "🔓 Activate Relay"
+    relay1Btn: "🔓 Open the Gate",
+    relay2Btn: "🔓 Open the Door"
   }
 };
 
@@ -65,7 +64,8 @@ let currentLang = "it";
 function setLanguage(lang) {
   currentLang = lang;
   document.getElementById("title").innerText = translations[lang].title;
-  relayBtn.innerText = translations[lang].relayBtn;
+  relay1Btn.innerText = translations[lang].relay1Btn;
+  relay2Btn.innerText = translations[lang].relay2Btn;
   status.textContent = "";
   display.textContent = "_____";
 }
@@ -74,7 +74,8 @@ function setLanguage(lang) {
 function resetUI(msg = "") {
   inputCode = "";
   display.textContent = "_____";
-  relayBtn.classList.add("hidden");
+  relay1Btn.classList.add("hidden");
+  relay2Btn.classList.add("hidden");
   if (relayTimeout) {
     clearTimeout(relayTimeout);
     relayTimeout = null;
@@ -112,9 +113,10 @@ document.querySelectorAll(".key").forEach(btn => {
 
         if (data.success) {
           status.textContent = translations[currentLang].correct;
-          relayBtn.classList.remove("hidden");
+          relay1Btn.classList.remove("hidden");
+          relay2Btn.classList.remove("hidden");
 
-          // Nascondi pulsante dopo 1 minuto
+          // Nascondi pulsanti dopo 1 minuto
           if (relayTimeout) clearTimeout(relayTimeout);
           relayTimeout = setTimeout(() => {
             resetUI(translations[currentLang].expired);
@@ -136,13 +138,13 @@ document.querySelectorAll(".key").forEach(btn => {
   });
 });
 
-// 🚀 Attiva relè
-relayBtn.addEventListener("click", async () => {
+// 🚀 Attiva relè generico
+async function activateRelay(relayId) {
   try {
     const res = await fetch(`${API_BASE}/send-command`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userCode: inputCode })
+      body: JSON.stringify({ userCode: inputCode, relayId })
     });
 
     const data = await res.json();
@@ -153,7 +155,10 @@ relayBtn.addEventListener("click", async () => {
     }
 
     if (data.success) {
-      status.textContent = translations[currentLang].relay;
+      status.textContent =
+        relayId === 1
+          ? translations[currentLang].relay1
+          : translations[currentLang].relay2;
       setTimeout(() => (status.textContent = ""), 2000);
     } else {
       resetUI(translations[currentLang].invalid);
@@ -161,7 +166,11 @@ relayBtn.addEventListener("click", async () => {
   } catch {
     resetUI(translations[currentLang].error);
   }
-});
+}
+
+// Collego i pulsanti ai relè
+relay1Btn.addEventListener("click", () => activateRelay(1));
+relay2Btn.addEventListener("click", () => activateRelay(2));
 
 // 🔔 Ping automatico al backend per svegliarlo
 (async () => {
