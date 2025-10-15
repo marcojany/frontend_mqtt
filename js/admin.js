@@ -1,26 +1,34 @@
 const API_BASE = "https://backend-mqtt-1.onrender.com";
 const backendStatus = document.getElementById("backend-status");
+const backendLed = document.getElementById("backend-led");
+const luceLed = document.getElementById("luce-led");
+const luceStatusText = document.getElementById("luce-status-text");
+const luceOnBtn = document.getElementById("luce-on-btn");
+const luceOffBtn = document.getElementById("luce-off-btn");
 
-//ping per svegliare Backend
+// Ping per svegliare Backend
 async function pingBackend() {
-  backendStatus.textContent = "Waiting for connection...  ⏳";
+  backendStatus.textContent = "Waiting for connection...";
+  backendLed.style.backgroundColor = "#ffdf2bff";
 
   try {
     const res = await fetch(`${API_BASE}/ping`, { cache: "no-store" });
     if (res.ok) {
-      backendStatus.textContent = "Online 🟢";
+      backendStatus.textContent = "Online";
+      backendLed.style.backgroundColor = "#22c55e";
     } else {
-      backendStatus.textContent = "Error ❌";
+      backendStatus.textContent = "Error";
+      backendLed.style.backgroundColor = "#ef4444";
     }
   } catch (err) {
-    backendStatus.textContent = "Offline 🔴";
+    backendStatus.textContent = "Offline";
+    backendLed.style.backgroundColor = "#ef4444";
   }
 }
 
-// ping immediato
+// Ping immediato
 pingBackend();
-
-// ping ogni 60 secondi
+// Ping ogni 60 secondi
 setInterval(pingBackend, 60000);
 
 // Formatta tempo rimanente in giorni:ore:minuti
@@ -32,7 +40,84 @@ function formatTime(seconds) {
   return `${d}d:${h}h:${m}m`;
 }
 
-// --- Codici attivi ---
+// --- CONTROLLO LUCE ---
+
+// Ottieni stato luce
+async function fetchLuceStatus() {
+  try {
+    const res = await fetch(`${API_BASE}/admin/luce/status`);
+    const data = await res.json();
+    
+    if (data.success) {
+      updateLuceUI(data.isOn);
+    }
+  } catch (err) {
+    console.error("Errore fetch stato luce:", err);
+  }
+}
+
+// Aggiorna UI dello stato luce
+function updateLuceUI(isOn) {
+  if (isOn) {
+    luceLed.classList.remove("off");
+    luceLed.classList.add("on");
+    luceStatusText.textContent = "Luce accesa";
+    luceStatusText.style.color = "#f59e0b";
+  } else {
+    luceLed.classList.remove("on");
+    luceLed.classList.add("off");
+    luceStatusText.textContent = "Luce spenta";
+    luceStatusText.style.color = "#6b7280";
+  }
+}
+
+// Accendi luce
+luceOnBtn.addEventListener("click", async () => {
+  try {
+    luceOnBtn.disabled = true;
+    const res = await fetch(`${API_BASE}/admin/luce/on`, { method: "POST" });
+    const data = await res.json();
+    
+    if (data.success) {
+      // Aggiorna UI immediatamente (lo stato MQTT arriverà dopo)
+      updateLuceUI(true);
+      // Ricontrolla lo stato dopo 500ms per conferma
+      setTimeout(fetchLuceStatus, 500);
+    } else {
+      alert("Errore nell'accensione della luce");
+    }
+  } catch (err) {
+    console.error("Errore accensione luce:", err);
+    alert("Errore di connessione");
+  } finally {
+    luceOnBtn.disabled = false;
+  }
+});
+
+// Spegni luce
+luceOffBtn.addEventListener("click", async () => {
+  try {
+    luceOffBtn.disabled = true;
+    const res = await fetch(`${API_BASE}/admin/luce/off`, { method: "POST" });
+    const data = await res.json();
+    
+    if (data.success) {
+      // Aggiorna UI immediatamente
+      updateLuceUI(false);
+      // Ricontrolla lo stato dopo 500ms per conferma
+      setTimeout(fetchLuceStatus, 500);
+    } else {
+      alert("Errore nello spegnimento della luce");
+    }
+  } catch (err) {
+    console.error("Errore spegnimento luce:", err);
+    alert("Errore di connessione");
+  } finally {
+    luceOffBtn.disabled = false;
+  }
+});
+
+// --- CODICI ATTIVI ---
 async function fetchCodes() {
   try {
     const res = await fetch(`${API_BASE}/admin/list-codes`);
@@ -41,30 +126,29 @@ async function fetchCodes() {
     tbody.innerHTML = "";
 
     // Ordina per scadenza decrescente (più recenti in cima)
-data.activeCodes.sort((a, b) => b.expiry - a.expiry);
+    data.activeCodes.sort((a, b) => b.expiry - a.expiry);
 
-data.activeCodes.forEach(c => {
-  const startDate = new Date(c.start).toLocaleString("it-IT", { timeZone: "Europe/Rome" });
-  const expiryDate = new Date(c.expiry).toLocaleString("it-IT", { timeZone: "Europe/Rome" });
+    data.activeCodes.forEach(c => {
+      const startDate = new Date(c.start).toLocaleString("it-IT", { timeZone: "Europe/Rome" });
+      const expiryDate = new Date(c.expiry).toLocaleString("it-IT", { timeZone: "Europe/Rome" });
 
-  const row = document.createElement("tr");
-  row.innerHTML = `
-    <td>${c.code}</td>
-    <td>${c.user}</td>
-    <td>${startDate}</td>
-    <td>${expiryDate}</td>
-    <td>${formatTime(c.expiresInSeconds)}</td>
-    <td><button onclick="deleteCode('${c.code}')" class="bg-red-500 text-white px-3 py-1 rounded">Elimina</button></td>
-  `;
-  tbody.appendChild(row);
-});
-
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${c.code}</td>
+        <td>${c.user}</td>
+        <td>${startDate}</td>
+        <td>${expiryDate}</td>
+        <td>${formatTime(c.expiresInSeconds)}</td>
+        <td><button onclick="deleteCode('${c.code}')" class="bg-red-500 text-white px-3 py-1 rounded">Elimina</button></td>
+      `;
+      tbody.appendChild(row);
+    });
   } catch (err) {
     console.error("Errore fetch codici:", err);
   }
 }
 
-// --- Elimina codice ---
+// --- ELIMINA CODICE ---
 async function deleteCode(code) {
   if (!confirm(`Vuoi eliminare il codice ${code}?`)) return;
 
@@ -82,7 +166,7 @@ async function deleteCode(code) {
   }
 }
 
-// --- Crea nuovo codice ---
+// --- CREA NUOVO CODICE ---
 document.getElementById("createCodeForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const user = document.getElementById("username").value;
@@ -108,8 +192,7 @@ document.getElementById("createCodeForm").addEventListener("submit", async (e) =
   }
 });
 
-
-// --- Log accessi ---
+// --- LOG ACCESSI ---
 async function fetchLogs() {
   try {
     const res = await fetch(`${API_BASE}/admin/logs`);
@@ -122,7 +205,7 @@ async function fetchLogs() {
 
     data.logs.forEach(l => {
       const tr = document.createElement("tr");
-      tr.className = l.action; // assegna la classe per il colore
+      tr.className = l.action;
       tr.innerHTML = `
         <td>${l.user}</td>
         <td>${l.code}</td>
@@ -136,7 +219,7 @@ async function fetchLogs() {
   }
 }
 
-// 🔔 Ping automatico al backend per svegliarlo
+// Ping automatico al backend per svegliarlo
 (async () => {
   try {
     await fetch(`${API_BASE}/ping`);
@@ -146,8 +229,12 @@ async function fetchLogs() {
   }
 })();
 
-// --- Avvio automatico ---
+// --- AVVIO AUTOMATICO ---
 fetchCodes();
 fetchLogs();
+fetchLuceStatus(); // Carica stato iniziale luce
+
+// Aggiornamenti periodici
 setInterval(fetchCodes, 10000);
 setInterval(fetchLogs, 15000);
+setInterval(fetchLuceStatus, 3000); // Aggiorna stato luce ogni 3 secondi

@@ -9,17 +9,22 @@ const backendStatus = document.getElementById("backend-status");
 
 //ping per svegliare Backend
 async function pingBackend() {
-  backendStatus.textContent = "Waiting for connection... ⏳";
+  const backendLed = document.getElementById("backend-led");
+  backendStatus.textContent = "Waiting for connection...";
+  if (backendLed) backendLed.style.backgroundColor = "#ffdf2bff";
 
   try {
     const res = await fetch(`${API_BASE}/ping`, { cache: "no-store" });
     if (res.ok) {
-      backendStatus.textContent = "Online 🟢";
+      backendStatus.textContent = "Online";
+      if (backendLed) backendLed.style.backgroundColor = "#22c55e";
     } else {
-      backendStatus.textContent = "Error ❌";
+      backendStatus.textContent = "Error";
+      if (backendLed) backendLed.style.backgroundColor = "#ef4444";
     }
   } catch (err) {
-    backendStatus.textContent = "Offline 🔴";
+    backendStatus.textContent = "Offline";
+    if (backendLed) backendLed.style.backgroundColor = "#ef4444";
   }
 }
 

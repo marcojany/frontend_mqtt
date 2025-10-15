@@ -24,6 +24,30 @@ body {
   backdrop-filter: blur(10px);
   color: #fff;
   width: 300px;
+  transform: translateY(-25px);
+}
+
+/* Status Backend */
+.backend-status-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  justify-content: center;
+}
+
+#backend-led {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #9ca3af;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 0 4px rgba(0,0,0,0.3);
+}
+
+#backend-status {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 #display {
@@ -40,7 +64,7 @@ body {
 }
 
 .key {
-  padding: 1rem;
+  padding: 1.2rem;
   font-size: 1.2rem;
   border-radius: 0.5rem;
   border: none;
@@ -54,7 +78,7 @@ body {
   background: rgba(255,255,255,0.5);
 }
 
-#relayBtn {
+#relay1Btn, #relay2Btn {
   padding: 0.75rem 1rem;
   background: rgba(255, 255, 255, 0.2);
   border: none;
@@ -62,8 +86,23 @@ body {
   color: #fff;
   cursor: pointer;
   margin-top: 1rem;
+  width: 100%;
+}
+
+#relay1Btn:hover, #relay2Btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+#relay2Btn {
+  margin-top: 0.5rem;
 }
 
 .hidden {
   display: none;
+}
+
+#status {
+  margin-top: 1rem;
+  min-height: 24px;
+  font-size: 14px;
 }

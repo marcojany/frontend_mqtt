@@ -53,35 +53,33 @@
 
     /* Colori per azioni log */
     .ACTIVATED {
-      background-color: #25D03E; /* verde */
+      background-color: #25D03E;
     }
 
     .CREATED {
-      background-color: #e5e7eb; /* nessuno */
+      background-color: #e5e7eb;
     }
 
     .DELETED {
-      background-color: #EA250B; /* rosso */
+      background-color: #EA250B;
     }
 	
-	.VERIFIED {
-      background-color: #e5e7eb; /* nessuno */
+    .VERIFIED {
+      background-color: #e5e7eb;
     }
 
     .EXPIRED {
-      background-color: #EA250B; /* rosso */
+      background-color: #EA250B;
     }
 
     .INVALID {
-      background-color: #FFAE22; /* arancio */
+      background-color: #FFAE22;
     }
 
-    /* Colore del testo */
     td, th {
       color: #000;
     }
 
-    /* Input calendario */
     .calendar-input {
       background-color: #fff;
       border-radius: 6px;
@@ -100,54 +98,136 @@
       background-color: #dc2626;
     }
 
+    /* Stili per controllo luce */
+    .luce-control {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 24px;
+    }
+
+    .luce-status {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .led-indicator {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    }
+
+    .led-indicator.on {
+      background-color: #fbbf24;
+      box-shadow: 0 0 16px #fbbf24;
+    }
+
+    .led-indicator.off {
+      background-color: #6b7280;
+      box-shadow: 0 0 4px rgba(0,0,0,0.2);
+    }
+
+    .luce-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .luce-btn {
+      flex: 1;
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+
+    .luce-btn.on {
+      background-color: #fbbf24;
+      color: #000;
+    }
+
+    .luce-btn.on:hover {
+      background-color: #f59e0b;
+    }
+
+    .luce-btn.off {
+      background-color: #6b7280;
+      color: #fff;
+    }
+
+    .luce-btn.off:hover {
+      background-color: #4b5563;
+    }
+
+    .status-text {
+      font-size: 18px;
+      font-weight: 500;
+    }
+
   </style>
 </head>
 <body>
-    <!-- Stato backend -->
-  <div class="flex items-center space-x-2 mb-6">
-    <div id="backend-led" class="w-3 h-3 rounded-full bg-gray-400"></div>
-    <span id="backend-status" class="text-sm text-gray-600">Waiting for connection</span>
+  <!-- Stato backend -->
+  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;">
+    <div id="backend-led" style="width: 12px; height: 12px; border-radius: 50%; background-color: #9ca3af;"></div>
+    <span id="backend-status" style="font-size: 14px; color: #6b7280;">Waiting for connection</span>
   </div>
   
   <h1>Admin Panel</h1>
 
+  <!-- Controllo Luce -->
+  <section class="luce-control">
+    <h2>💡 Controllo Luce</h2>
+    <div class="luce-status">
+      <div id="luce-led" class="led-indicator off"></div>
+      <span id="luce-status-text" class="status-text">Luce spenta</span>
+    </div>
+    <div class="luce-buttons">
+      <button id="luce-on-btn" class="luce-btn on">🔆 Accendi</button>
+      <button id="luce-off-btn" class="luce-btn off">🌙 Spegni</button>
+    </div>
+  </section>
+
   <!-- Sezione creazione codice -->
-<section class="mb-8">
-  <h2 class="text-xl font-semibold mb-2">Crea Nuovo Codice</h2>
-  <form id="createCodeForm" class="space-y-2">
-    <input type="text" id="username" placeholder="Nome utente" required class="border p-2 rounded">
+  <section style="margin-bottom: 32px;">
+    <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">Crea Nuovo Codice</h2>
+    <form id="createCodeForm" style="display: flex; flex-direction: column; gap: 8px;">
+      <input type="text" id="username" placeholder="Nome utente" required style="border: 1px solid #ccc; padding: 8px; border-radius: 6px;">
 
-    <!-- Data inizio validità -->
-    <label for="startDate" class="block text-sm font-medium">Inizio validità</label>
-    <input type="datetime-local" id="startDate" class="calendar-input" required>
+      <label for="startDate" style="font-size: 14px; font-weight: 500;">Inizio validità</label>
+      <input type="datetime-local" id="startDate" class="calendar-input" required>
 
-    <!-- Data fine validità -->
-    <label for="expiryDate" class="block text-sm font-medium">Fine validità</label>
-    <input type="datetime-local" id="expiryDate" class="calendar-input" required>
+      <label for="expiryDate" style="font-size: 14px; font-weight: 500;">Fine validità</label>
+      <input type="datetime-local" id="expiryDate" class="calendar-input" required>
 
-    <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">Crea Codice</button>
-  </form>
-</section>
-
+      <button type="submit" style="background-color: #3b82f6; color: white; padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer;">Crea Codice</button>
+    </form>
+  </section>
 
   <!-- Tabella codici attivi -->
-<section class="mb-8">
-  <h2 class="text-xl font-semibold mb-2">📋 Codici Attivi</h2>
-  <table id="codesTable">
-    <thead>
-      <tr>
-        <th>Codice</th>
-        <th>Utente</th>
-        <th>Inizio validità</th>
-        <th>Scadenza</th>
-        <th>Tempo rimanente</th>
-        <th>Azioni</th>
-      </tr>
-    </thead>
-    <tbody id="codesTableBody"></tbody>
-  </table>
-</section>
-
+  <section style="margin-bottom: 32px;">
+    <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">📋 Codici Attivi</h2>
+    <table id="codesTable">
+      <thead>
+        <tr>
+          <th>Codice</th>
+          <th>Utente</th>
+          <th>Inizio validità</th>
+          <th>Scadenza</th>
+          <th>Tempo rimanente</th>
+          <th>Azioni</th>
+        </tr>
+      </thead>
+      <tbody id="codesTableBody"></tbody>
+    </table>
+  </section>
 
   <!-- Tabella log accessi -->
   <section>
