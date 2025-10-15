@@ -117,6 +117,66 @@ luceOffBtn.addEventListener("click", async () => {
   }
 });
 
+// --- CONTROLLO RELÈ ---
+
+// Apri cancello (Relay 1)
+document.getElementById("relay1-btn").addEventListener("click", async () => {
+  if (!confirm("Vuoi aprire il cancello?")) return;
+  
+  try {
+    const btn = document.getElementById("relay1-btn");
+    btn.disabled = true;
+    
+    const res = await fetch(`${API_BASE}/admin/relay/1`, { method: "POST" });
+    const data = await res.json();
+    
+    if (data.success) {
+      btn.textContent = "✅ Cancello aperto";
+      setTimeout(() => {
+        btn.textContent = "🔓 Apri Cancello";
+      }, 2000);
+    } else {
+      alert("Errore nell'apertura del cancello");
+    }
+  } catch (err) {
+    console.error("Errore apertura cancello:", err);
+    alert("Errore di connessione");
+  } finally {
+    setTimeout(() => {
+      document.getElementById("relay1-btn").disabled = false;
+    }, 2000);
+  }
+});
+
+// Apri portone (Relay 2)
+document.getElementById("relay2-btn").addEventListener("click", async () => {
+  if (!confirm("Vuoi aprire il portone?")) return;
+  
+  try {
+    const btn = document.getElementById("relay2-btn");
+    btn.disabled = true;
+    
+    const res = await fetch(`${API_BASE}/admin/relay/2`, { method: "POST" });
+    const data = await res.json();
+    
+    if (data.success) {
+      btn.textContent = "✅ Portone aperto";
+      setTimeout(() => {
+        btn.textContent = "🔓 Apri Portone";
+      }, 2000);
+    } else {
+      alert("Errore nell'apertura del portone");
+    }
+  } catch (err) {
+    console.error("Errore apertura portone:", err);
+    alert("Errore di connessione");
+  } finally {
+    setTimeout(() => {
+      document.getElementById("relay2-btn").disabled = false;
+    }, 2000);
+  }
+});
+
 // --- CODICI ATTIVI ---
 async function fetchCodes() {
   try {
@@ -139,7 +199,7 @@ async function fetchCodes() {
         <td>${startDate}</td>
         <td>${expiryDate}</td>
         <td>${formatTime(c.expiresInSeconds)}</td>
-        <td><button onclick="deleteCode('${c.code}')" class="bg-red-500 text-white px-3 py-1 rounded">Elimina</button></td>
+        <td><button onclick="deleteCode('${c.code}')" class="delete-btn">Elimina</button></td>
       `;
       tbody.appendChild(row);
     });

@@ -12,43 +12,77 @@
       padding: 24px;
     }
 
-    h1, h2 {
-      margin-bottom: 12px;
+    h1 {
+      margin-bottom: 24px;
+      font-size: 28px;
+    }
+
+    h2 {
+      margin-bottom: 16px;
+      font-size: 20px;
+      font-weight: 600;
+      margin-top: 0;
+    }
+
+    /* Stile pannelli */
+    .panel {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 24px;
     }
 
     form input, form button {
-      padding: 8px;
+      padding: 12px;
       border-radius: 6px;
       border: 1px solid #ccc;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
+      font-size: 16px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    form label {
+      display: block;
       font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      margin-top: 8px;
     }
 
     form button {
-      background-color: #1e40af;
+      background-color: #3b82f6;
       color: #fff;
       border: none;
       cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s;
+      margin-top: 8px;
+      padding: 12px 24px;
     }
 
     form button:hover {
-      background-color: #1e3a8a;
+      background-color: #2563eb;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 12px;
+      font-size: 14px;
     }
 
     th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
+      border: 1px solid #e5e7eb;
+      padding: 10px;
       text-align: left;
     }
 
     th {
-      background-color: #e5e7eb;
+      background-color: #f3f4f6;
+      font-weight: 600;
+      font-size: 14px;
     }
 
     /* Colori per azioni log */
@@ -99,7 +133,7 @@
     }
 
     /* Stili per controllo luce */
-    .luce-control {
+    .panel {
       background-color: #fff;
       padding: 20px;
       border-radius: 8px;
@@ -171,6 +205,20 @@
       font-weight: 500;
     }
 
+    .relay-btn {
+      background-color: #3b82f6;
+      color: white;
+    }
+
+    .relay-btn:hover {
+      background-color: #2563eb;
+    }
+
+    .relay-btn:disabled {
+      background-color: #9ca3af;
+      cursor: not-allowed;
+    }
+
   </style>
 </head>
 <body>
@@ -182,7 +230,7 @@
   
   <h1>Admin Panel</h1>
 
-  <!-- Controllo Luce -->
+  <!-- Controllo Luce e Relè -->
   <section class="luce-control">
     <h2>💡 Controllo Luce</h2>
     <div class="luce-status">
@@ -193,7 +241,17 @@
       <button id="luce-on-btn" class="luce-btn on">🔆 Accendi</button>
       <button id="luce-off-btn" class="luce-btn off">🌙 Spegni</button>
     </div>
+    
+    <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;">
+    
+    <h2>🚪 Controllo Relè</h2>
+    <div class="luce-buttons" style="margin-top: 16px;">
+      <button id="relay1-btn" class="luce-btn relay-btn">🔓 Apri Cancello</button>
+      <button id="relay2-btn" class="luce-btn relay-btn">🔓 Apri Portone</button>
+    </div>
   </section>
+
+  <hr style="border: none; border-top: 2px solid #e5e7eb; margin: 32px 0;">
 
   <!-- Sezione creazione codice -->
   <section style="margin-bottom: 32px;">
