@@ -6,6 +6,46 @@ const luceStatusText = document.getElementById("luce-status-text");
 const luceOnBtn = document.getElementById("luce-on-btn");
 const luceOffBtn = document.getElementById("luce-off-btn");
 
+// --- THEME TOGGLE ---
+const themeToggle = document.getElementById("themeToggle");
+const themeIcon = document.getElementById("themeIcon");
+const themeText = document.getElementById("themeText");
+
+// Carica tema salvato o usa quello di default (scuro)
+function loadTheme() {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "light") {
+    document.body.classList.add("light-mode");
+    themeIcon.textContent = "☀️";
+    themeText.textContent = "Chiaro";
+  } else {
+    document.body.classList.remove("light-mode");
+    themeIcon.textContent = "🌙";
+    themeText.textContent = "Scuro";
+  }
+}
+
+// Toggle tra tema chiaro e scuro
+function toggleTheme() {
+  document.body.classList.toggle("light-mode");
+
+  if (document.body.classList.contains("light-mode")) {
+    themeIcon.textContent = "☀️";
+    themeText.textContent = "Chiaro";
+    localStorage.setItem("theme", "light");
+  } else {
+    themeIcon.textContent = "🌙";
+    themeText.textContent = "Scuro";
+    localStorage.setItem("theme", "dark");
+  }
+}
+
+// Event listener per il toggle
+themeToggle.addEventListener("click", toggleTheme);
+
+// Carica il tema all'avvio
+loadTheme();
+
 // Ping per svegliare Backend
 async function pingBackend() {
   backendStatus.textContent = "Waiting for connection...";
@@ -61,12 +101,12 @@ function updateLuceUI(isOn) {
   if (isOn) {
     luceLed.classList.remove("off");
     luceLed.classList.add("on");
-    luceStatusText.textContent = "Luce accesa";
+    luceStatusText.textContent = "Luci Attive";
     luceStatusText.style.color = "#f59e0b";
   } else {
     luceLed.classList.remove("on");
     luceLed.classList.add("off");
-    luceStatusText.textContent = "Luce spenta";
+    luceStatusText.textContent = "Luci Disattive";
     luceStatusText.style.color = "#6b7280";
   }
 }

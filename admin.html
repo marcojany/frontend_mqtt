@@ -5,11 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Panel</title>
   <style>
+    :root {
+      --bg-body: #444343;
+      --bg-panel: #2d2d2d;
+      --bg-input: #1f1f1f;
+      --bg-table-header: #1f1f1f;
+      --bg-table-cell: #2d2d2d;
+      --text-primary: #ffffff;
+      --text-secondary: #9ca3af;
+      --border-color: #4a4a4a;
+      --placeholder-color: #9ca3af;
+    }
+
+    body.light-mode {
+      --bg-body: #f3f4f6;
+      --bg-panel: #ffffff;
+      --bg-input: #f5f5f5;
+      --bg-table-header: #f3f4f6;
+      --bg-table-cell: #ffffff;
+      --text-primary: #000000;
+      --text-secondary: #6b7280;
+      --border-color: #e5e7eb;
+      --placeholder-color: #9ca3af;
+    }
+
     body {
-      background-color: #f5f5f5;
-      color: #000;
+      background-color: var(--bg-body);
+      color: var(--text-primary);
       font-family: sans-serif;
       padding: 24px;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     h1 {
@@ -26,11 +51,12 @@
 
     /* Stile pannelli */
     .panel {
-      background-color: #fff;
+      background-color: var(--bg-panel);
       padding: 20px;
       border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
       margin-bottom: 24px;
+      transition: background-color 0.3s ease;
     }
 
     form input, form button {
@@ -41,6 +67,17 @@
       font-size: 16px;
       width: 100%;
       box-sizing: border-box;
+    }
+
+    form input {
+      background-color: var(--bg-input);
+      color: var(--text-primary);
+      border-color: var(--border-color);
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    form input::placeholder {
+      color: var(--placeholder-color);
     }
 
     form label {
@@ -66,6 +103,10 @@
       background-color: #2563eb;
     }
 
+    .create-code-btn {
+      padding: 24px 12px;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -74,53 +115,78 @@
     }
 
     th, td {
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--border-color);
       padding: 10px;
       text-align: left;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     }
 
     th {
-      background-color: #f3f4f6;
+      background-color: var(--bg-table-header);
       font-weight: 600;
       font-size: 14px;
+      color: var(--text-primary);
+    }
+
+    td {
+      background-color: var(--bg-table-cell);
+      color: var(--text-primary);
     }
 
     /* Colori per azioni log */
     .ACTIVATED {
       background-color: #25D03E;
+      color: #000000;
+      font-weight: 600;
     }
 
     .CREATED {
-      background-color: #e5e7eb;
+      background-color: #60a5fa;
+      color: #000000;
+      font-weight: 600;
     }
 
     .DELETED {
       background-color: #EA250B;
+      color: #ffffff;
+      font-weight: 600;
     }
-	
+
     .VERIFIED {
-      background-color: #e5e7eb;
+      background-color: #60a5fa;
+      color: #000000;
+      font-weight: 600;
     }
 
     .EXPIRED {
       background-color: #EA250B;
+      color: #ffffff;
+      font-weight: 600;
     }
 
     .INVALID {
       background-color: #FFAE22;
-    }
-
-    td, th {
-      color: #000;
+      color: #000000;
+      font-weight: 600;
     }
 
     .calendar-input {
-      background-color: #fff;
+      background-color: var(--bg-input);
       border-radius: 6px;
+      color: var(--text-primary);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    body:not(.light-mode) .calendar-input {
+      color-scheme: dark;
+    }
+
+    body.light-mode .calendar-input {
+      color-scheme: light;
     }
 
     button.delete-btn {
-      background-color: #ef4444;
+      background-color: #888888;
       color: #fff;
       border: none;
       cursor: pointer;
@@ -133,14 +199,6 @@
     }
 
     /* Stili per controllo luce */
-    .panel {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      margin-bottom: 24px;
-    }
-
     .luce-status {
       display: flex;
       align-items: center;
@@ -173,7 +231,7 @@
 
     .luce-btn {
       flex: 1;
-      padding: 12px 24px;
+      padding: 40px 24px;
       font-size: 16px;
       border: none;
       border-radius: 6px;
@@ -183,12 +241,12 @@
     }
 
     .luce-btn.on {
-      background-color: #fbbf24;
+      background-color: #faed3a;
       color: #000;
     }
 
     .luce-btn.on:hover {
-      background-color: #f59e0b;
+      background-color: #dad601;
     }
 
     .luce-btn.off {
@@ -206,12 +264,12 @@
     }
 
     .relay-btn {
-      background-color: #3b82f6;
-      color: white;
+      background-color: #f38932;
+      color: rgb(0, 0, 0);
     }
 
     .relay-btn:hover {
-      background-color: #2563eb;
+      background-color: #eb4325;
     }
 
     .relay-btn:disabled {
@@ -219,45 +277,86 @@
       cursor: not-allowed;
     }
 
+    /* Theme Toggle */
+    .theme-toggle-container {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 1000;
+    }
+
+    .theme-toggle {
+      background-color: var(--bg-panel);
+      border: 2px solid var(--border-color);
+      border-radius: 50px;
+      padding: 8px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .theme-toggle span {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
   </style>
 </head>
 <body>
+  <!-- Theme Toggle -->
+  <div class="theme-toggle-container">
+    <button class="theme-toggle" id="themeToggle">
+      <span id="themeIcon">🌙</span>
+      <span id="themeText">Scuro</span>
+    </button>
+  </div>
+
   <!-- Stato backend -->
   <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;">
     <div id="backend-led" style="width: 12px; height: 12px; border-radius: 50%; background-color: #9ca3af;"></div>
     <span id="backend-status" style="font-size: 14px; color: #6b7280;">Waiting for connection</span>
   </div>
-  
+
   <h1>Admin Panel</h1>
 
   <!-- Controllo Luce e Relè -->
   <section class="luce-control">
-    <h2>💡 Controllo Luce</h2>
+    <h2>💡 Luci Esterne </h2>
     <div class="luce-status">
       <div id="luce-led" class="led-indicator off"></div>
-      <span id="luce-status-text" class="status-text">Luce spenta</span>
+      <span id="luce-status-text" class="status-text">Luci Disattive</span>
     </div>
     <div class="luce-buttons">
-      <button id="luce-on-btn" class="luce-btn on">🔆 Accendi</button>
-      <button id="luce-off-btn" class="luce-btn off">🌙 Spegni</button>
+      <button id="luce-on-btn" class="luce-btn on">🔆 Attiva</button>
+      <button id="luce-off-btn" class="luce-btn off">🌙 Disattiva</button>
     </div>
-    
-    <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;">
-    
-    <h2>🚪 Controllo Relè</h2>
+
+    <hr style="margin: 24px 0; border: none; border-top: 1px solid var(--border-color);">
+
+    <h2>🔑 Aperture</h2>
     <div class="luce-buttons" style="margin-top: 16px;">
-      <button id="relay1-btn" class="luce-btn relay-btn">🔓 Apri Cancello</button>
-      <button id="relay2-btn" class="luce-btn relay-btn">🔓 Apri Portone</button>
+      <button id="relay1-btn" class="luce-btn relay-btn">🔒 Apri Cancello Esterno</button>
+      <button id="relay2-btn" class="luce-btn relay-btn">🚪 Apri Portone</button>
     </div>
   </section>
 
-  <hr style="border: none; border-top: 2px solid #e5e7eb; margin: 32px 0;">
+  <hr style="border: none; border-top: 2px solid var(--border-color); margin: 32px 0;">
 
   <!-- Sezione creazione codice -->
   <section style="margin-bottom: 32px;">
     <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">Crea Nuovo Codice</h2>
     <form id="createCodeForm" style="display: flex; flex-direction: column; gap: 8px;">
-      <input type="text" id="username" placeholder="Nome utente" required style="border: 1px solid #ccc; padding: 8px; border-radius: 6px;">
+      <input type="text" id="username" placeholder="Nome utente" required>
 
       <label for="startDate" style="font-size: 14px; font-weight: 500;">Inizio validità</label>
       <input type="datetime-local" id="startDate" class="calendar-input" required>
@@ -265,7 +364,7 @@
       <label for="expiryDate" style="font-size: 14px; font-weight: 500;">Fine validità</label>
       <input type="datetime-local" id="expiryDate" class="calendar-input" required>
 
-      <button type="submit" style="background-color: #3b82f6; color: white; padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer;">Crea Codice</button>
+      <button type="submit" class="create-code-btn">Crea Codice</button>
     </form>
   </section>
 
