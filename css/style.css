@@ -10,10 +10,22 @@ body {
 
 .lang-switch {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 1rem;
+  right: 1rem;
   display: flex;
   gap: 10px;
+  z-index: 10;
+}
+
+.lang-switch img {
+  width: 25px;
+  height: auto;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.lang-switch img:hover {
+  transform: scale(1.1);
 }
 
 .container.glass {
@@ -25,12 +37,14 @@ body {
   color: #fff;
   width: 300px;
   transform: translateY(-25px);
+  position: relative;
 }
 
 .logo {
-  width: 120px;
+  width: 180px;
   height: auto;
   margin-bottom: 16px;
+  filter: brightness(0) invert(1);
 }
 
 /* Status Backend */
@@ -83,24 +97,23 @@ body {
 .key:hover {
   background: rgba(255,255,255,0.5);
 }
-
+.relay-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
 #relay1Btn, #relay2Btn {
-  padding: 0.75rem 1rem;
+  padding: 1.5rem 1rem;
   background: rgba(255, 255, 255, 0.2);
   border: none;
   border-radius: 0.5rem;
   color: #fff;
   cursor: pointer;
-  margin-top: 1rem;
-  width: 100%;
+  flex: 1
 }
 
 #relay1Btn:hover, #relay2Btn:hover {
   background: rgba(255, 255, 255, 0.3);
-}
-
-#relay2Btn {
-  margin-top: 0.5rem;
 }
 
 .hidden {

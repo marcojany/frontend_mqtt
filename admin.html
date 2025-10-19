@@ -33,8 +33,15 @@
       background-color: var(--bg-body);
       color: var(--text-primary);
       font-family: sans-serif;
-      padding: 24px;
+      padding: 0;
+      margin: 0;
       transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 24px;
     }
 
     h1 {
@@ -241,12 +248,12 @@
     }
 
     .luce-btn.on {
-      background-color: #faed3a;
+      background-color: #f5e400;
       color: #000;
     }
 
     .luce-btn.on:hover {
-      background-color: #dad601;
+      background-color: #dab903;
     }
 
     .luce-btn.off {
@@ -264,12 +271,12 @@
     }
 
     .relay-btn {
-      background-color: #f38932;
+      background-color: #c76bf1;
       color: rgb(0, 0, 0);
     }
 
     .relay-btn:hover {
-      background-color: #eb4325;
+      background-color: #e527f7;
     }
 
     .relay-btn:disabled {
@@ -321,13 +328,14 @@
     </button>
   </div>
 
-  <!-- Stato backend -->
-  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;">
-    <div id="backend-led" style="width: 12px; height: 12px; border-radius: 50%; background-color: #9ca3af;"></div>
-    <span id="backend-status" style="font-size: 14px; color: #6b7280;">Waiting for connection</span>
-  </div>
+  <div class="container">
+    <!-- Stato backend -->
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;">
+      <div id="backend-led" style="width: 12px; height: 12px; border-radius: 50%; background-color: #9ca3af;"></div>
+      <span id="backend-status" style="font-size: 14px; color: #6b7280;">Waiting for connection</span>
+    </div>
 
-  <h1>Admin Panel</h1>
+    <h1>Admin Panel</h1>
 
   <!-- Controllo Luce e Relè -->
   <section class="luce-control">
@@ -345,7 +353,7 @@
 
     <h2>🔑 Aperture</h2>
     <div class="luce-buttons" style="margin-top: 16px;">
-      <button id="relay1-btn" class="luce-btn relay-btn">🔒 Apri Cancello Esterno</button>
+      <button id="relay1-btn" class="luce-btn relay-btn">🔓 Apri Cancello Esterno</button>
       <button id="relay2-btn" class="luce-btn relay-btn">🚪 Apri Portone</button>
     </div>
   </section>
@@ -401,6 +409,7 @@
       <tbody id="logsTableBody"></tbody>
     </table>
   </section>
+  </div>
 
   <script src="js/admin.js"></script>
 </body>

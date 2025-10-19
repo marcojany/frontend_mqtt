@@ -38,28 +38,28 @@ const translations = {
   it: {
     title: "Inserisci codice",
     insert5: "Inserisci 5 cifre",
-    correct: "✅ Codice corretto, puoi attivare i relè",
+    correct: "✅ Codice corretto, Benvenuto!",
     expired: "⏱️ Tempo scaduto, reinserire il codice",
     wrong: "❌ Codice errato",
-    relay1: "✅ Relè 1 attivato!",
-    relay2: "✅ Relè 2 attivato!",
+    relay1: "✅ Cancello aperto!",
+    relay2: "✅ Portone aperto!",
     invalid: "❌ Codice non valido",
     error: "⚠️ Errore connessione",
     relay1Btn: "🔓 Apri il Cancello",
-    relay2Btn: "🔓 Apri il Portone"
+    relay2Btn: "🚪 Apri il Portone"
   },
   en: {
     title: "Enter your code",
     insert5: "Enter 5 digits",
-    correct: "✅ Correct code, you can activate the relays",
+    correct: "✅ Correct code, wellcome!",
     expired: "⏱️ Timeout expired, re-enter the code",
     wrong: "❌ Wrong code",
-    relay1: "✅ Relay 1 activated!",
-    relay2: "✅ Relay 2 activated!",
+    relay1: "✅ Gate opened!",
+    relay2: "✅ Door opened!",
     invalid: "❌ Invalid code",
     error: "⚠️ Connection error",
     relay1Btn: "🔓 Open the Gate",
-    relay2Btn: "🔓 Open the Door"
+    relay2Btn: "🚪 Open the Door"
   }
 };
 

@@ -7,15 +7,15 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <!-- Switch lingua -->
-  <div class="lang-switch">
-    <img src="https://flagcdn.com/w20/it.png" alt="Italiano" onclick="setLanguage('it')">
-    <img src="https://flagcdn.com/w20/gb.png" alt="English" onclick="setLanguage('en')">
-  </div>
-
   <div class="container glass">
+    <!-- Switch lingua -->
+    <div class="lang-switch">
+      <img src="https://flagcdn.com/w20/it.png" alt="Italiano" onclick="setLanguage('it')">
+      <img src="https://flagcdn.com/w20/gb.png" alt="English" onclick="setLanguage('en')">
+    </div>
+
     <!-- Logo -->
-    <img src="assets/logo.png" alt="Logo" class="logo">
+    <img src="assets/logo2.png" alt="Logo" class="logo">
     
     <!-- Status Backend -->
     <div class="backend-status-container">
@@ -42,8 +42,10 @@
       <button class="key">OK</button>
     </div>
 
-    <button id="relay1Btn" class="hidden">🔓 Apri Cancello</button>
-    <button id="relay2Btn" class="hidden">🔓 Apri Portone</button>
+    <div class="relay-buttons">
+      <button id="relay1Btn" class="hidden">🔓 Apri Cancello</button>
+      <button id="relay2Btn" class="hidden">🚪 Apri Portone</button>
+    </div>
     <p id="status"></p>
   </div>
 

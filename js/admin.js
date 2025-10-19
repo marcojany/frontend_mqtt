@@ -202,7 +202,7 @@ document.getElementById("relay2-btn").addEventListener("click", async () => {
     if (data.success) {
       btn.textContent = "✅ Portone aperto";
       setTimeout(() => {
-        btn.textContent = "🔓 Apri Portone";
+        btn.textContent = "🚪 Apri Portone";
       }, 2000);
     } else {
       alert("Errore nell'apertura del portone");
