@@ -168,6 +168,16 @@ function formatTime(seconds) {
   return `${d}d:${h}h:${m}m`;
 }
 
+// Helper per gestire risposte non autenticate
+function handleAuthError(res) {
+  if (res.status === 401) {
+    alert("Sessione scaduta. Effettua nuovamente il login.");
+    showLoginScreen();
+    return true;
+  }
+  return false;
+}
+
 // Inizializza il pannello admin dopo il login
 function initAdminPanel() {
   pingBackend();
@@ -222,15 +232,21 @@ luceOnBtn.addEventListener("click", async () => {
       method: "POST",
       credentials: 'include'
     });
+
+    if (handleAuthError(res)) {
+      luceOnBtn.disabled = false;
+      return;
+    }
+
     const data = await res.json();
-    
+
     if (data.success) {
       // Aggiorna UI immediatamente (lo stato MQTT arriverà dopo)
       updateLuceUI(true);
       // Ricontrolla lo stato dopo 500ms per conferma
       setTimeout(fetchLuceStatus, 500);
     } else {
-      alert("Errore nell'accensione della luce");
+      alert("Errore nell'accensione della luce: " + (data.error || "Errore sconosciuto"));
     }
   } catch (err) {
     console.error("Errore accensione luce:", err);
@@ -248,15 +264,21 @@ luceOffBtn.addEventListener("click", async () => {
       method: "POST",
       credentials: 'include'
     });
+
+    if (handleAuthError(res)) {
+      luceOffBtn.disabled = false;
+      return;
+    }
+
     const data = await res.json();
-    
+
     if (data.success) {
       // Aggiorna UI immediatamente
       updateLuceUI(false);
       // Ricontrolla lo stato dopo 500ms per conferma
       setTimeout(fetchLuceStatus, 500);
     } else {
-      alert("Errore nello spegnimento della luce");
+      alert("Errore nello spegnimento della luce: " + (data.error || "Errore sconosciuto"));
     }
   } catch (err) {
     console.error("Errore spegnimento luce:", err);
@@ -271,24 +293,27 @@ luceOffBtn.addEventListener("click", async () => {
 // Apri cancello (Relay 1)
 document.getElementById("relay1-btn").addEventListener("click", async () => {
   if (!confirm("Vuoi aprire il cancello?")) return;
-  
+
   try {
     const btn = document.getElementById("relay1-btn");
     btn.disabled = true;
-    
+
     const res = await fetch(`${API_BASE}/admin/relay/1`, {
       method: "POST",
       credentials: 'include'
     });
+
+    if (handleAuthError(res)) return;
+
     const data = await res.json();
-    
+
     if (data.success) {
       btn.textContent = "✅ Cancello aperto";
       setTimeout(() => {
         btn.textContent = "🔓 Apri Cancello";
       }, 2000);
     } else {
-      alert("Errore nell'apertura del cancello");
+      alert("Errore nell'apertura del cancello: " + (data.error || "Errore sconosciuto"));
     }
   } catch (err) {
     console.error("Errore apertura cancello:", err);
@@ -303,24 +328,27 @@ document.getElementById("relay1-btn").addEventListener("click", async () => {
 // Apri portone (Relay 2)
 document.getElementById("relay2-btn").addEventListener("click", async () => {
   if (!confirm("Vuoi aprire il portone?")) return;
-  
+
   try {
     const btn = document.getElementById("relay2-btn");
     btn.disabled = true;
-    
+
     const res = await fetch(`${API_BASE}/admin/relay/2`, {
       method: "POST",
       credentials: 'include'
     });
+
+    if (handleAuthError(res)) return;
+
     const data = await res.json();
-    
+
     if (data.success) {
       btn.textContent = "✅ Portone aperto";
       setTimeout(() => {
         btn.textContent = "🚪 Apri Portone";
       }, 2000);
     } else {
-      alert("Errore nell'apertura del portone");
+      alert("Errore nell'apertura del portone: " + (data.error || "Errore sconosciuto"));
     }
   } catch (err) {
     console.error("Errore apertura portone:", err);
