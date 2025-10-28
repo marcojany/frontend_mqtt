@@ -49,6 +49,7 @@ loginForm.addEventListener("submit", async (e) => {
   const password = document.getElementById("loginPassword").value;
 
   try {
+    console.log("🔐 Tentativo di login...");
     const res = await fetch(`${API_BASE}/admin/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -56,13 +57,20 @@ loginForm.addEventListener("submit", async (e) => {
       body: JSON.stringify({ username, password })
     });
 
+    console.log("📊 Status login:", res.status);
+    console.log("📊 Headers login:", [...res.headers.entries()]);
+    console.log("🍪 Cookie dopo login:", document.cookie);
+
     const data = await res.json();
+    console.log("📦 Risposta login:", data);
 
     if (data.success) {
+      console.log("✅ Login riuscito!");
       showAdminPanel();
       loginForm.reset();
       loginError.classList.remove("show");
     } else {
+      console.log("❌ Login fallito:", data.error);
       loginError.textContent = data.error || "Credenziali non valide";
       loginError.classList.add("show");
     }
@@ -298,14 +306,19 @@ document.getElementById("relay1-btn").addEventListener("click", async () => {
     const btn = document.getElementById("relay1-btn");
     btn.disabled = true;
 
+    console.log("🔍 Invio richiesta apertura cancello...");
     const res = await fetch(`${API_BASE}/admin/relay/1`, {
       method: "POST",
       credentials: 'include'
     });
 
+    console.log("📊 Status risposta:", res.status);
+    console.log("📊 Headers risposta:", [...res.headers.entries()]);
+
     if (handleAuthError(res)) return;
 
     const data = await res.json();
+    console.log("📦 Dati ricevuti:", data);
 
     if (data.success) {
       btn.textContent = "✅ Cancello aperto";
