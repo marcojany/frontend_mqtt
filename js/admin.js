@@ -1,27 +1,53 @@
 const API_BASE = "https://backend-mqtt-1.onrender.com";
 
-// --- AUTENTICAZIONE ---
+// --- AUTENTICAZIONE JWT ---
 const loginScreen = document.getElementById("loginScreen");
 const adminPanel = document.getElementById("adminPanel");
 const loginForm = document.getElementById("loginForm");
 const loginError = document.getElementById("loginError");
 const logoutBtn = document.getElementById("logoutBtn");
 
+// Ottieni token da localStorage
+function getToken() {
+  return localStorage.getItem('adminToken');
+}
+
+// Salva token in localStorage
+function setToken(token) {
+  localStorage.setItem('adminToken', token);
+}
+
+// Rimuovi token da localStorage
+function removeToken() {
+  localStorage.removeItem('adminToken');
+}
+
 // Verifica se l'utente è già autenticato
 async function checkAuth() {
+  const token = getToken();
+
+  if (!token) {
+    showLoginScreen();
+    return;
+  }
+
   try {
     const res = await fetch(`${API_BASE}/admin/check-auth`, {
-      credentials: 'include'
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     });
     const data = await res.json();
 
     if (data.isAuthenticated) {
       showAdminPanel();
     } else {
+      removeToken();
       showLoginScreen();
     }
   } catch (err) {
     console.error("Errore verifica auth:", err);
+    removeToken();
     showLoginScreen();
   }
 }
@@ -53,19 +79,17 @@ loginForm.addEventListener("submit", async (e) => {
     const res = await fetch(`${API_BASE}/admin/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: 'include',
       body: JSON.stringify({ username, password })
     });
 
     console.log("📊 Status login:", res.status);
-    console.log("📊 Headers login:", [...res.headers.entries()]);
-    console.log("🍪 Cookie dopo login:", document.cookie);
 
     const data = await res.json();
     console.log("📦 Risposta login:", data);
 
-    if (data.success) {
-      console.log("✅ Login riuscito!");
+    if (data.success && data.token) {
+      console.log("✅ Login riuscito! Token ricevuto");
+      setToken(data.token);  // Salva il token in localStorage
       showAdminPanel();
       loginForm.reset();
       loginError.classList.remove("show");
@@ -85,13 +109,13 @@ loginForm.addEventListener("submit", async (e) => {
 logoutBtn.addEventListener("click", async () => {
   try {
     await fetch(`${API_BASE}/admin/logout`, {
-      method: "POST",
-      credentials: 'include'
+      method: "POST"
     });
-
-    showLoginScreen();
   } catch (err) {
     console.error("Errore logout:", err);
+  } finally {
+    removeToken();  // Rimuove il token da localStorage
+    showLoginScreen();
   }
 });
 
@@ -176,10 +200,20 @@ function formatTime(seconds) {
   return `${d}d:${h}h:${m}m`;
 }
 
+// Helper per ottenere headers con JWT
+function getAuthHeaders() {
+  const token = getToken();
+  return {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  };
+}
+
 // Helper per gestire risposte non autenticate
 function handleAuthError(res) {
   if (res.status === 401) {
     alert("Sessione scaduta. Effettua nuovamente il login.");
+    removeToken();
     showLoginScreen();
     return true;
   }
@@ -205,8 +239,11 @@ function initAdminPanel() {
 async function fetchLuceStatus() {
   try {
     const res = await fetch(`${API_BASE}/admin/luce/status`, {
-      credentials: 'include'
+      headers: getAuthHeaders()
     });
+
+    if (handleAuthError(res)) return;
+
     const data = await res.json();
     
     if (data.success) {
@@ -238,7 +275,7 @@ luceOnBtn.addEventListener("click", async () => {
     luceOnBtn.disabled = true;
     const res = await fetch(`${API_BASE}/admin/luce/on`, {
       method: "POST",
-      credentials: 'include'
+      headers: getAuthHeaders()
     });
 
     if (handleAuthError(res)) {
@@ -270,7 +307,7 @@ luceOffBtn.addEventListener("click", async () => {
     luceOffBtn.disabled = true;
     const res = await fetch(`${API_BASE}/admin/luce/off`, {
       method: "POST",
-      credentials: 'include'
+      headers: getAuthHeaders()
     });
 
     if (handleAuthError(res)) {
@@ -309,7 +346,7 @@ document.getElementById("relay1-btn").addEventListener("click", async () => {
     console.log("🔍 Invio richiesta apertura cancello...");
     const res = await fetch(`${API_BASE}/admin/relay/1`, {
       method: "POST",
-      credentials: 'include'
+      headers: getAuthHeaders()
     });
 
     console.log("📊 Status risposta:", res.status);
@@ -348,7 +385,7 @@ document.getElementById("relay2-btn").addEventListener("click", async () => {
 
     const res = await fetch(`${API_BASE}/admin/relay/2`, {
       method: "POST",
-      credentials: 'include'
+      headers: getAuthHeaders()
     });
 
     if (handleAuthError(res)) return;
@@ -377,8 +414,11 @@ document.getElementById("relay2-btn").addEventListener("click", async () => {
 async function fetchCodes() {
   try {
     const res = await fetch(`${API_BASE}/admin/list-codes`, {
-      credentials: 'include'
+      headers: getAuthHeaders()
     });
+
+    if (handleAuthError(res)) return;
+
     const data = await res.json();
     const tbody = document.getElementById("codesTableBody");
     tbody.innerHTML = "";
@@ -413,8 +453,11 @@ async function deleteCode(code) {
   try {
     const res = await fetch(`${API_BASE}/admin/delete-code/${code}`, {
       method: "DELETE",
-      credentials: 'include'
+      headers: getAuthHeaders()
     });
+
+    if (handleAuthError(res)) return;
+
     const data = await res.json();
     if (data.success) {
       fetchCodes();
@@ -437,10 +480,12 @@ document.getElementById("createCodeForm").addEventListener("submit", async (e) =
   try {
     const res = await fetch(`${API_BASE}/admin/create-code`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: 'include',
+      headers: getAuthHeaders(),
       body: JSON.stringify({ user, startDate, expiryDate })
     });
+
+    if (handleAuthError(res)) return;
+
     const data = await res.json();
     if (data.success) {
       alert(`Codice ${data.code} creato per ${data.user} valido dal ${new Date(data.start).toLocaleString("it-IT", { timeZone: "Europe/Rome", hour12: false })} fino al ${new Date(data.expiry).toLocaleString("it-IT", { timeZone: "Europe/Rome", hour12: false })}`);
@@ -458,8 +503,11 @@ document.getElementById("createCodeForm").addEventListener("submit", async (e) =
 async function fetchLogs() {
   try {
     const res = await fetch(`${API_BASE}/admin/logs`, {
-      credentials: 'include'
+      headers: getAuthHeaders()
     });
+
+    if (handleAuthError(res)) return;
+
     const data = await res.json();
     const tbody = document.getElementById("logsTableBody");
     tbody.innerHTML = "";
