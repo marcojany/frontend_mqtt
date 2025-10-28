@@ -69,7 +69,7 @@ const translations = {
     wrong: "❌ 'O nummero nunn'è bbuono",
     relay1: "✅ 'O canciello è apierto",
     relay2: "✅ 'O purtone è apierto",
-    invalid: "❌ ‘O nummero nunn'è bbuono chiù",
+    invalid: "❌ ‘O nummero nunn'è bbuono cchiù",
     error: "⚠️ Nun ce sta 'a connessione",
     relay1Btn: "🔐 Arape 'o canciello",
     relay2Btn: "🚪 Arape 'o purtone"
