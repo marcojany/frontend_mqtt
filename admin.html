@@ -271,12 +271,12 @@
     }
 
     .relay-btn {
-      background-color: #c76bf1;
+      background-color: #3b82f6;
       color: rgb(0, 0, 0);
     }
 
     .relay-btn:hover {
-      background-color: #e527f7;
+      background-color: #2563eb;
     }
 
     .relay-btn:disabled {
@@ -317,18 +317,104 @@
       color: var(--text-primary);
     }
 
+    /* Login Screen Styles */
+    .login-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background-color: var(--bg-body);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .login-container {
+      background-color: var(--bg-panel);
+      padding: 48px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .login-logo {
+      text-align: center;
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+
+    #loginForm input {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 16px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-input);
+      color: var(--text-primary);
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    #loginForm button {
+      width: 100%;
+      padding: 14px;
+      background-color: #3b82f6;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    #loginForm button:hover {
+      background-color: #2563eb;
+    }
+
+    .login-error {
+      color: #ef4444;
+      font-size: 14px;
+      margin-top: 12px;
+      text-align: center;
+      display: none;
+    }
+
+    .login-error.show {
+      display: block;
+    }
+
   </style>
 </head>
 <body>
-  <!-- Theme Toggle -->
-  <div class="theme-toggle-container">
-    <button class="theme-toggle" id="themeToggle">
-      <span id="themeIcon">🌙</span>
-      <span id="themeText">Scuro</span>
-    </button>
+  <!-- Login Screen -->
+  <div id="loginScreen" class="login-screen">
+    <div class="login-container">
+      <div class="login-logo">🔐</div>
+      <h1 style="text-align: center; margin-bottom: 24px;">Admin Login</h1>
+      <form id="loginForm">
+        <input type="text" id="loginUsername" placeholder="Username" required autocomplete="username">
+        <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
+        <button type="submit">Accedi</button>
+        <div id="loginError" class="login-error"></div>
+      </form>
+    </div>
   </div>
 
-  <div class="container">
+  <!-- Main Admin Panel (hidden by default) -->
+  <div id="adminPanel" style="display: none;">
+    <!-- Theme Toggle -->
+    <div class="theme-toggle-container">
+      <button class="theme-toggle" id="themeToggle">
+        <span id="themeIcon">🌙</span>
+        <span id="themeText">Scuro</span>
+      </button>
+    </div>
+
+    <div class="container">
     <!-- Stato backend -->
     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;">
       <div id="backend-led" style="width: 12px; height: 12px; border-radius: 50%; background-color: #9ca3af;"></div>
@@ -409,6 +495,16 @@
       <tbody id="logsTableBody"></tbody>
     </table>
   </section>
+  </div>
+
+  <!-- Logout Button -->
+  <div style="text-align: center; margin-top: 32px; padding-bottom: 32px;">
+    <button id="logoutBtn" style="background-color: #dc2626; color: #fff; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 500;">
+      Logout
+    </button>
+  </div>
+
+  </div>
   </div>
 
   <script src="js/admin.js"></script>

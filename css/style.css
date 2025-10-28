@@ -18,8 +18,8 @@ body {
 }
 
 .lang-switch img {
-  width: 25px;
-  height: auto;
+  width: 20px;
+  height: 15px;
   cursor: pointer;
   transition: transform 0.2s;
 }

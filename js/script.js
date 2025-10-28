@@ -43,7 +43,7 @@ const translations = {
     wrong: "❌ Codice errato",
     relay1: "✅ Cancello aperto!",
     relay2: "✅ Portone aperto!",
-    invalid: "❌ Codice non valido",
+    invalid: "❌ Codice non più valido",
     error: "⚠️ Errore connessione",
     relay1Btn: "🔓 Apri il Cancello",
     relay2Btn: "🚪 Apri il Portone"
@@ -56,10 +56,23 @@ const translations = {
     wrong: "❌ Wrong code",
     relay1: "✅ Gate opened!",
     relay2: "✅ Door opened!",
-    invalid: "❌ Invalid code",
+    invalid: "❌ Code no longer valid",
     error: "⚠️ Connection error",
     relay1Btn: "🔓 Open the Gate",
     relay2Btn: "🚪 Open the Door"
+  },
+  na: {
+    title: "Miette 'o nummero",
+    insert5: "🔢 Miette cinche nummere",  
+    correct: "✅ 'O nummero è bbuono, trase", 
+    expired: "⏱ Hê perzo tiempo, miette n'ata vota 'o nummero",
+    wrong: "❌ 'O nummero nunn'è bbuono",
+    relay1: "✅ 'O canciello è apierto",
+    relay2: "✅ 'O purtone è apierto",
+    invalid: "❌ ‘O nummero nunn'è bbuono chiù",
+    error: "⚠️ Nun ce sta 'a connessione",
+    relay1Btn: "🔐 Arape 'o canciello",
+    relay2Btn: "🚪 Arape 'o purtone"
   }
 };
 

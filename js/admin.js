@@ -1,4 +1,92 @@
 const API_BASE = "https://backend-mqtt-1.onrender.com";
+
+// --- AUTENTICAZIONE ---
+const loginScreen = document.getElementById("loginScreen");
+const adminPanel = document.getElementById("adminPanel");
+const loginForm = document.getElementById("loginForm");
+const loginError = document.getElementById("loginError");
+const logoutBtn = document.getElementById("logoutBtn");
+
+// Verifica se l'utente è già autenticato
+async function checkAuth() {
+  try {
+    const res = await fetch(`${API_BASE}/admin/check-auth`, {
+      credentials: 'include'
+    });
+    const data = await res.json();
+
+    if (data.isAuthenticated) {
+      showAdminPanel();
+    } else {
+      showLoginScreen();
+    }
+  } catch (err) {
+    console.error("Errore verifica auth:", err);
+    showLoginScreen();
+  }
+}
+
+// Mostra schermata di login
+function showLoginScreen() {
+  loginScreen.style.display = "flex";
+  adminPanel.style.display = "none";
+}
+
+// Mostra pannello admin
+function showAdminPanel() {
+  loginScreen.style.display = "none";
+  adminPanel.style.display = "block";
+
+  // Avvia il caricamento dei dati
+  initAdminPanel();
+}
+
+// Gestione login
+loginForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const username = document.getElementById("loginUsername").value;
+  const password = document.getElementById("loginPassword").value;
+
+  try {
+    const res = await fetch(`${API_BASE}/admin/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: 'include',
+      body: JSON.stringify({ username, password })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      showAdminPanel();
+      loginForm.reset();
+      loginError.classList.remove("show");
+    } else {
+      loginError.textContent = data.error || "Credenziali non valide";
+      loginError.classList.add("show");
+    }
+  } catch (err) {
+    console.error("Errore login:", err);
+    loginError.textContent = "Errore di connessione";
+    loginError.classList.add("show");
+  }
+});
+
+// Gestione logout
+logoutBtn.addEventListener("click", async () => {
+  try {
+    await fetch(`${API_BASE}/admin/logout`, {
+      method: "POST",
+      credentials: 'include'
+    });
+
+    showLoginScreen();
+  } catch (err) {
+    console.error("Errore logout:", err);
+  }
+});
+
 const backendStatus = document.getElementById("backend-status");
 const backendLed = document.getElementById("backend-led");
 const luceLed = document.getElementById("luce-led");
@@ -80,12 +168,27 @@ function formatTime(seconds) {
   return `${d}d:${h}h:${m}m`;
 }
 
+// Inizializza il pannello admin dopo il login
+function initAdminPanel() {
+  pingBackend();
+  fetchCodes();
+  fetchLogs();
+  fetchLuceStatus();
+
+  // Avvia aggiornamenti periodici
+  setInterval(fetchCodes, 10000);
+  setInterval(fetchLogs, 15000);
+  setInterval(fetchLuceStatus, 3000);
+}
+
 // --- CONTROLLO LUCE ---
 
 // Ottieni stato luce
 async function fetchLuceStatus() {
   try {
-    const res = await fetch(`${API_BASE}/admin/luce/status`);
+    const res = await fetch(`${API_BASE}/admin/luce/status`, {
+      credentials: 'include'
+    });
     const data = await res.json();
     
     if (data.success) {
@@ -115,7 +218,10 @@ function updateLuceUI(isOn) {
 luceOnBtn.addEventListener("click", async () => {
   try {
     luceOnBtn.disabled = true;
-    const res = await fetch(`${API_BASE}/admin/luce/on`, { method: "POST" });
+    const res = await fetch(`${API_BASE}/admin/luce/on`, {
+      method: "POST",
+      credentials: 'include'
+    });
     const data = await res.json();
     
     if (data.success) {
@@ -138,7 +244,10 @@ luceOnBtn.addEventListener("click", async () => {
 luceOffBtn.addEventListener("click", async () => {
   try {
     luceOffBtn.disabled = true;
-    const res = await fetch(`${API_BASE}/admin/luce/off`, { method: "POST" });
+    const res = await fetch(`${API_BASE}/admin/luce/off`, {
+      method: "POST",
+      credentials: 'include'
+    });
     const data = await res.json();
     
     if (data.success) {
@@ -167,7 +276,10 @@ document.getElementById("relay1-btn").addEventListener("click", async () => {
     const btn = document.getElementById("relay1-btn");
     btn.disabled = true;
     
-    const res = await fetch(`${API_BASE}/admin/relay/1`, { method: "POST" });
+    const res = await fetch(`${API_BASE}/admin/relay/1`, {
+      method: "POST",
+      credentials: 'include'
+    });
     const data = await res.json();
     
     if (data.success) {
@@ -196,7 +308,10 @@ document.getElementById("relay2-btn").addEventListener("click", async () => {
     const btn = document.getElementById("relay2-btn");
     btn.disabled = true;
     
-    const res = await fetch(`${API_BASE}/admin/relay/2`, { method: "POST" });
+    const res = await fetch(`${API_BASE}/admin/relay/2`, {
+      method: "POST",
+      credentials: 'include'
+    });
     const data = await res.json();
     
     if (data.success) {
@@ -220,7 +335,9 @@ document.getElementById("relay2-btn").addEventListener("click", async () => {
 // --- CODICI ATTIVI ---
 async function fetchCodes() {
   try {
-    const res = await fetch(`${API_BASE}/admin/list-codes`);
+    const res = await fetch(`${API_BASE}/admin/list-codes`, {
+      credentials: 'include'
+    });
     const data = await res.json();
     const tbody = document.getElementById("codesTableBody");
     tbody.innerHTML = "";
@@ -253,7 +370,10 @@ async function deleteCode(code) {
   if (!confirm(`Vuoi eliminare il codice ${code}?`)) return;
 
   try {
-    const res = await fetch(`${API_BASE}/admin/delete-code/${code}`, { method: "DELETE" });
+    const res = await fetch(`${API_BASE}/admin/delete-code/${code}`, {
+      method: "DELETE",
+      credentials: 'include'
+    });
     const data = await res.json();
     if (data.success) {
       fetchCodes();
@@ -277,6 +397,7 @@ document.getElementById("createCodeForm").addEventListener("submit", async (e) =
     const res = await fetch(`${API_BASE}/admin/create-code`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: 'include',
       body: JSON.stringify({ user, startDate, expiryDate })
     });
     const data = await res.json();
@@ -295,7 +416,9 @@ document.getElementById("createCodeForm").addEventListener("submit", async (e) =
 // --- LOG ACCESSI ---
 async function fetchLogs() {
   try {
-    const res = await fetch(`${API_BASE}/admin/logs`);
+    const res = await fetch(`${API_BASE}/admin/logs`, {
+      credentials: 'include'
+    });
     const data = await res.json();
     const tbody = document.getElementById("logsTableBody");
     tbody.innerHTML = "";
@@ -319,22 +442,5 @@ async function fetchLogs() {
   }
 }
 
-// Ping automatico al backend per svegliarlo
-(async () => {
-  try {
-    await fetch(`${API_BASE}/ping`);
-    console.log("✅ Backend pinged");
-  } catch (err) {
-    console.warn("⚠️ Backend non raggiungibile:", err);
-  }
-})();
-
-// --- AVVIO AUTOMATICO ---
-fetchCodes();
-fetchLogs();
-fetchLuceStatus(); // Carica stato iniziale luce
-
-// Aggiornamenti periodici
-setInterval(fetchCodes, 10000);
-setInterval(fetchLogs, 15000);
-setInterval(fetchLuceStatus, 3000); // Aggiorna stato luce ogni 3 secondi
+// --- AVVIO: Verifica autenticazione ---
+checkAuth();
