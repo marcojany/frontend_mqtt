@@ -7,6 +7,12 @@ const status = document.getElementById("status");
 const API_BASE = "https://backend-mqtt-1.onrender.com"; // indirizzo Backend service
 const backendStatus = document.getElementById("backend-status");
 
+// Sistema di limitazione tentativi
+let failedAttempts = 0;
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_TIME = 5 * 60 * 1000; // 5 minuti in millisecondi
+let lockoutEndTime = null;
+
 //ping per svegliare Backend
 async function pingBackend() {
   const backendLed = document.getElementById("backend-led");
@@ -46,7 +52,9 @@ const translations = {
     invalid: "❌ Codice non più valido",
     error: "⚠️ Errore connessione",
     relay1Btn: "🔓 Apri il Cancello",
-    relay2Btn: "🚪 Apri il Portone"
+    relay2Btn: "🚪 Apri il Portone",
+    tooManyAttempts: "🚫 Troppi tentativi errati, riprova fra 5 minuti",
+    lockedOut: "🔒 Attendi ancora"
   },
   en: {
     title: "Enter your code",
@@ -59,24 +67,74 @@ const translations = {
     invalid: "❌ Code no longer valid",
     error: "⚠️ Connection error",
     relay1Btn: "🔓 Open the Gate",
-    relay2Btn: "🚪 Open the Door"
+    relay2Btn: "🚪 Open the Door",
+    tooManyAttempts: "🚫 Too many failed attempts, try again in 5 minutes",
+    lockedOut: "🔒 Wait"
   },
   na: {
     title: "Miette 'o nummero",
-    insert5: "🔢 Miette cinche nummere",  
-    correct: "✅ 'O nummero è bbuono, trase", 
+    insert5: "🔢 Miette cinche nummere",
+    correct: "✅ 'O nummero è bbuono, trase",
     expired: "⏱ Hê perzo tiempo, miette n'ata vota 'o nummero",
     wrong: "❌ 'O nummero nunn'è bbuono",
     relay1: "✅ 'O canciello è apierto",
     relay2: "✅ 'O purtone è apierto",
-    invalid: "❌ ‘O nummero nunn'è bbuono cchiù",
+    invalid: "❌ 'O nummero nunn'è bbuono cchiù",
     error: "⚠️ Nun ce sta 'a connessione",
     relay1Btn: "🔐 Arape 'o canciello",
-    relay2Btn: "🚪 Arape 'o purtone"
+    relay2Btn: "🚪 Arape 'o purtone",
+    tooManyAttempts: "🚫 Troppi tentativi sbagliati, torna fra 5 minuti",
+    lockedOut: "🔒 Aspetta"
   }
 };
 
 let currentLang = "it";
+
+// 🔒 Funzioni per gestire il lockout
+function checkLockout() {
+  if (lockoutEndTime && Date.now() < lockoutEndTime) {
+    const remainingTime = Math.ceil((lockoutEndTime - Date.now()) / 1000);
+    const minutes = Math.floor(remainingTime / 60);
+    const seconds = remainingTime % 60;
+    return { locked: true, remaining: `${minutes}:${seconds.toString().padStart(2, '0')}` };
+  }
+  if (lockoutEndTime && Date.now() >= lockoutEndTime) {
+    // Reset dopo il timeout
+    lockoutEndTime = null;
+    failedAttempts = 0;
+  }
+  return { locked: false };
+}
+
+function startLockout() {
+  lockoutEndTime = Date.now() + LOCKOUT_TIME;
+  status.textContent = translations[currentLang].tooManyAttempts;
+  display.textContent = "🚫🚫🚫";
+
+  // Disabilita il tastierino
+  document.querySelectorAll(".key").forEach(btn => {
+    btn.disabled = true;
+    btn.style.opacity = "0.5";
+    btn.style.cursor = "not-allowed";
+  });
+
+  // Aggiorna il countdown ogni secondo
+  const countdownInterval = setInterval(() => {
+    const lockStatus = checkLockout();
+    if (!lockStatus.locked) {
+      clearInterval(countdownInterval);
+      // Riabilita il tastierino
+      document.querySelectorAll(".key").forEach(btn => {
+        btn.disabled = false;
+        btn.style.opacity = "1";
+        btn.style.cursor = "pointer";
+      });
+      resetUI();
+    } else {
+      status.textContent = `${translations[currentLang].lockedOut} ${lockStatus.remaining}`;
+    }
+  }, 1000);
+}
 
 // 🌐 Cambia lingua
 function setLanguage(lang) {
@@ -105,6 +163,12 @@ function resetUI(msg = "") {
 // 🎛️ Gestione tastierino
 document.querySelectorAll(".key").forEach(btn => {
   btn.addEventListener("click", async () => {
+    // Verifica lockout
+    const lockStatus = checkLockout();
+    if (lockStatus.locked) {
+      return;
+    }
+
     const val = btn.textContent;
 
     if (val === "←") {
@@ -130,6 +194,8 @@ document.querySelectorAll(".key").forEach(btn => {
         const data = await res.json();
 
         if (data.success) {
+          // Reset tentativi in caso di successo
+          failedAttempts = 0;
           status.textContent = translations[currentLang].correct;
           relay1Btn.classList.remove("hidden");
           relay2Btn.classList.remove("hidden");
@@ -140,7 +206,13 @@ document.querySelectorAll(".key").forEach(btn => {
             resetUI(translations[currentLang].expired);
           }, 60000);
         } else {
-          resetUI(translations[currentLang].wrong);
+          // Incrementa tentativi falliti
+          failedAttempts++;
+          if (failedAttempts >= MAX_ATTEMPTS) {
+            startLockout();
+          } else {
+            resetUI(translations[currentLang].wrong);
+          }
         }
       } catch {
         resetUI(translations[currentLang].error);
