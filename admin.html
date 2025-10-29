@@ -42,6 +42,7 @@
       max-width: 800px;
       margin: 0 auto;
       padding: 24px;
+      position: relative;
     }
 
     h1 {
@@ -286,9 +287,9 @@
 
     /* Theme Toggle */
     .theme-toggle-container {
-      position: fixed;
-      top: 24px;
-      right: 24px;
+      position: absolute;
+      top: 0;
+      right: 0;
       z-index: 1000;
     }
 
@@ -406,6 +407,7 @@
 
   <!-- Main Admin Panel (hidden by default) -->
   <div id="adminPanel" style="display: none;">
+    <div class="container">
     <!-- Theme Toggle -->
     <div class="theme-toggle-container">
       <button class="theme-toggle" id="themeToggle">
@@ -414,7 +416,6 @@
       </button>
     </div>
 
-    <div class="container">
     <!-- Stato backend -->
     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;">
       <div id="backend-led" style="width: 12px; height: 12px; border-radius: 50%; background-color: #9ca3af;"></div>
