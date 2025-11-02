@@ -168,21 +168,33 @@ loadTheme();
 
 // Ping per svegliare Backend
 async function pingBackend() {
+  const loginBackendStatus = document.getElementById("login-backend-status");
+  const loginBackendLed = document.getElementById("login-backend-led");
+
+  // Aggiorna entrambi gli stati (login e admin panel)
   backendStatus.textContent = "Waiting for connection...";
   backendLed.style.backgroundColor = "#ffdf2bff";
+  if (loginBackendStatus) loginBackendStatus.textContent = "Waiting for connection...";
+  if (loginBackendLed) loginBackendLed.style.backgroundColor = "#ffdf2bff";
 
   try {
     const res = await fetch(`${API_BASE}/ping`, { cache: "no-store" });
     if (res.ok) {
       backendStatus.textContent = "Online";
       backendLed.style.backgroundColor = "#22c55e";
+      if (loginBackendStatus) loginBackendStatus.textContent = "Online";
+      if (loginBackendLed) loginBackendLed.style.backgroundColor = "#22c55e";
     } else {
       backendStatus.textContent = "Error";
       backendLed.style.backgroundColor = "#ef4444";
+      if (loginBackendStatus) loginBackendStatus.textContent = "Error";
+      if (loginBackendLed) loginBackendLed.style.backgroundColor = "#ef4444";
     }
   } catch (err) {
     backendStatus.textContent = "Offline";
     backendLed.style.backgroundColor = "#ef4444";
+    if (loginBackendStatus) loginBackendStatus.textContent = "Offline";
+    if (loginBackendLed) loginBackendLed.style.backgroundColor = "#ef4444";
   }
 }
 
@@ -259,12 +271,12 @@ function updateLuceUI(isOn) {
   if (isOn) {
     luceLed.classList.remove("off");
     luceLed.classList.add("on");
-    luceStatusText.textContent = "Luci Attive";
+    luceStatusText.textContent = "Luci attive";
     luceStatusText.style.color = "#f59e0b";
   } else {
     luceLed.classList.remove("on");
     luceLed.classList.add("off");
-    luceStatusText.textContent = "Luci Disattive";
+    luceStatusText.textContent = "Luci disattive";
     luceStatusText.style.color = "#6b7280";
   }
 }
@@ -358,9 +370,9 @@ document.getElementById("relay1-btn").addEventListener("click", async () => {
     console.log("📦 Dati ricevuti:", data);
 
     if (data.success) {
-      btn.textContent = "✅ Cancello aperto";
+      btn.innerHTML = '<img src="assets/Cancello.png" alt="Cancello"> ✅ Cancello aperto';
       setTimeout(() => {
-        btn.textContent = "🔓 Apri Cancello";
+        btn.innerHTML = '<img src="assets/Cancello.png" alt="Cancello"> Apri cancello esterno';
       }, 2000);
     } else {
       alert("Errore nell'apertura del cancello: " + (data.error || "Errore sconosciuto"));
@@ -393,9 +405,9 @@ document.getElementById("relay2-btn").addEventListener("click", async () => {
     const data = await res.json();
 
     if (data.success) {
-      btn.textContent = "✅ Portone aperto";
+      btn.innerHTML = '<img src="assets/Portone.png" alt="Portone"> ✅ Portone aperto';
       setTimeout(() => {
-        btn.textContent = "🚪 Apri Portone";
+        btn.innerHTML = '<img src="assets/Portone.png" alt="Portone"> Apri portone';
       }, 2000);
     } else {
       alert("Errore nell'apertura del portone: " + (data.error || "Errore sconosciuto"));

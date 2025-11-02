@@ -274,6 +274,9 @@
     .relay-btn {
       background-color: #3b82f6;
       color: rgb(0, 0, 0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .relay-btn:hover {
@@ -283,6 +286,16 @@
     .relay-btn:disabled {
       background-color: #9ca3af;
       cursor: not-allowed;
+    }
+
+    .relay-btn img {
+      width: 36px;
+      height: 36px;
+      margin-right: 12px;
+      /*filter: invert(0);
+      background-color: #ffffff;
+      padding: 8px;
+      border-radius: 8px; */
     }
 
     /* Theme Toggle */
@@ -396,6 +409,13 @@
     <div class="login-container">
       <div class="login-logo">🔐</div>
       <h1 style="text-align: center; margin-bottom: 24px;">Admin Login</h1>
+
+      <!-- Stato backend nella schermata di login -->
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px; justify-content: center;">
+        <div id="login-backend-led" style="width: 12px; height: 12px; border-radius: 50%; background-color: #9ca3af; transition: background-color 0.3s ease; box-shadow: 0 0 4px rgba(0,0,0,0.3);"></div>
+        <span id="login-backend-status" style="font-size: 14px; color: var(--text-secondary);">Waiting for connection</span>
+      </div>
+
       <form id="loginForm">
         <input type="text" id="loginUsername" placeholder="Username" required autocomplete="username">
         <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
@@ -432,16 +452,22 @@
       <span id="luce-status-text" class="status-text">Luci Disattive</span>
     </div>
     <div class="luce-buttons">
-      <button id="luce-on-btn" class="luce-btn on">🔆 Attiva</button>
-      <button id="luce-off-btn" class="luce-btn off">🌙 Disattiva</button>
+      <button id="luce-on-btn" class="luce-btn on"><h3>Attiva 🔆</h3></button>
+      <button id="luce-off-btn" class="luce-btn off"><h3>Disattiva 🌙</h3></button>
     </div>
 
     <hr style="margin: 24px 0; border: none; border-top: 1px solid var(--border-color);">
 
     <h2>🔑 Aperture</h2>
     <div class="luce-buttons" style="margin-top: 16px;">
-      <button id="relay1-btn" class="luce-btn relay-btn">🔓 Apri Cancello Esterno</button>
-      <button id="relay2-btn" class="luce-btn relay-btn">🚪 Apri Portone</button>
+      <button id="relay1-btn" class="luce-btn relay-btn">
+        <h3>Apri cancello esterno</h3>
+        <img src="assets/Cancello.png" alt="Cancello">  
+      </button>
+      <button id="relay2-btn" class="luce-btn relay-btn">
+        <h3>Apri portone</h3>
+        <img src="assets/Portone.png" alt="Portone">        
+      </button>
     </div>
   </section>
 
@@ -449,7 +475,7 @@
 
   <!-- Sezione creazione codice -->
   <section style="margin-bottom: 32px;">
-    <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">Crea Nuovo Codice</h2>
+    <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">Crea nuovo codice</h2>
     <form id="createCodeForm" style="display: flex; flex-direction: column; gap: 8px;">
       <input type="text" id="username" placeholder="Nome utente" required>
 
@@ -459,13 +485,13 @@
       <label for="expiryDate" style="font-size: 14px; font-weight: 500;">Fine validità</label>
       <input type="datetime-local" id="expiryDate" class="calendar-input" required>
 
-      <button type="submit" class="create-code-btn">Crea Codice</button>
+      <button type="submit" class="create-code-btn">Crea codice</button>
     </form>
   </section>
 
   <!-- Tabella codici attivi -->
   <section style="margin-bottom: 32px;">
-    <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">📋 Codici Attivi</h2>
+    <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">📋 Codici attivi</h2>
     <table id="codesTable">
       <thead>
         <tr>
@@ -483,7 +509,7 @@
 
   <!-- Tabella log accessi -->
   <section>
-    <h2>📜 Log Accessi</h2>
+    <h2>📜 Log accessi</h2>
     <table id="logsTable">
       <thead>
         <tr>
