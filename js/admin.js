@@ -237,7 +237,9 @@ function initAdminPanel() {
   pingBackend();
   fetchCodes();
   fetchLogs();
-  fetchLuceStatus();
+
+  // Sollecita immediatamente lo status allo Shelly
+  requestLuceStatus();
 
   // Avvia aggiornamenti periodici
   setInterval(fetchCodes, 10000);
@@ -257,12 +259,36 @@ async function fetchLuceStatus() {
     if (handleAuthError(res)) return;
 
     const data = await res.json();
-    
+
     if (data.success) {
       updateLuceUI(data.isOn);
     }
   } catch (err) {
     console.error("Errore fetch stato luce:", err);
+  }
+}
+
+// Sollecita lo status della luce allo Shelly
+async function requestLuceStatus() {
+  try {
+    const res = await fetch(`${API_BASE}/admin/luce/request-status`, {
+      method: "POST",
+      headers: getAuthHeaders()
+    });
+
+    if (handleAuthError(res)) return;
+
+    const data = await res.json();
+
+    if (data.success) {
+      console.log("📡 Richiesta status luce inviata");
+      // Attendi 500ms prima di interrogare lo stato aggiornato
+      setTimeout(fetchLuceStatus, 500);
+    } else {
+      console.error("Errore richiesta status:", data.error);
+    }
+  } catch (err) {
+    console.error("Errore sollecito status luce:", err);
   }
 }
 
@@ -300,8 +326,6 @@ luceOnBtn.addEventListener("click", async () => {
     if (data.success) {
       // Aggiorna UI immediatamente (lo stato MQTT arriverà dopo)
       updateLuceUI(true);
-      // Ricontrolla lo stato dopo 500ms per conferma
-      setTimeout(fetchLuceStatus, 500);
     } else {
       alert("Errore nell'accensione della luce: " + (data.error || "Errore sconosciuto"));
     }
@@ -332,8 +356,6 @@ luceOffBtn.addEventListener("click", async () => {
     if (data.success) {
       // Aggiorna UI immediatamente
       updateLuceUI(false);
-      // Ricontrolla lo stato dopo 500ms per conferma
-      setTimeout(fetchLuceStatus, 500);
     } else {
       alert("Errore nello spegnimento della luce: " + (data.error || "Errore sconosciuto"));
     }
