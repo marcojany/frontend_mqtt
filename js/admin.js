@@ -244,7 +244,7 @@ function initAdminPanel() {
   // Avvia aggiornamenti periodici
   setInterval(fetchCodes, 10000);
   setInterval(fetchLogs, 15000);
-  setInterval(fetchLuceStatus, 3000);
+  setInterval(fetchLuceStatus, 2000);
 }
 
 // --- CONTROLLO LUCE ---
@@ -324,8 +324,8 @@ luceOnBtn.addEventListener("click", async () => {
     const data = await res.json();
 
     if (data.success) {
-      // Aggiorna UI immediatamente (lo stato MQTT arriverà dopo)
-      updateLuceUI(true);
+      // Lo stato UI verrà aggiornato dal polling quando lo Shelly conferma
+      console.log("✅ Comando accensione inviato, in attesa conferma Shelly...");
     } else {
       alert("Errore nell'accensione della luce: " + (data.error || "Errore sconosciuto"));
     }
@@ -354,8 +354,8 @@ luceOffBtn.addEventListener("click", async () => {
     const data = await res.json();
 
     if (data.success) {
-      // Aggiorna UI immediatamente
-      updateLuceUI(false);
+      // Lo stato UI verrà aggiornato dal polling quando lo Shelly conferma
+      console.log("✅ Comando spegnimento inviato, in attesa conferma Shelly...");
     } else {
       alert("Errore nello spegnimento della luce: " + (data.error || "Errore sconosciuto"));
     }
